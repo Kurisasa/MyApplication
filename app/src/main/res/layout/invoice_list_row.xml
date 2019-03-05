@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/gray_transparent"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true">
+
+            <TextView
+                android:id="@+id/tv_invoice_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="25-Sep-2018"
+                android:textColor="@color/black"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:id="@+id/tv_invoice_date_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="25-Sep-2018 05:30pm"
+                android:textColor="@color/gray_transparent"
+                android:textSize="12sp"/>
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/tv_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="R 1505"
+            android:textSize="18sp"
+            android:layout_centerVertical="true"
+            android:textColor="@color/navy_blue"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/gray_transparent"/>
+    
+</LinearLayout>

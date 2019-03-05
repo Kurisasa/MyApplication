@@ -1,0 +1,149 @@
+<resources>
+    <string name="app_name" translatable="false">My Application</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="setting">Setting</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="text_accounts" translatable="false">All Accounts</string>
+    <string name="hint_name" translatable="false">Name</string>
+    <string name="hint_email" translatable="false">Email</string>
+    <string name="hint_password" translatable="false">Password</string>
+    <string name="hint_confirm_password" translatable="false">Confirm Password</string>
+    <string name="text_login" translatable="false">Login</string>
+    <string name="text_register" translatable="false">Register</string>
+    <string name="error_message_name" translatable="false">Enter Full Name</string>
+    <string name="error_message_email" translatable="false">Enter Valid Email</string>
+    <string name="error_message_age" translatable="false">Enter Age</string>
+    <string name="error_message_password" translatable="false">Enter Password</string>
+    <string name="success_message" translatable="false">Registration Successful</string>
+    <string name="text_not_member" translatable="false">No account yet? Create one</string>
+    <string name="text_already_member" translatable="false">Already a member? Login</string>
+    <string name="error_email_exists" translatable="false">Email Already Exists</string>
+    <string name="error_password_match" translatable="false">Password Does Not Matches</string>
+    <string name="error_valid_email_password" translatable="false">Wrong Email or Password</string>
+    <string name="text_hello" translatable="false">Hello,</string>
+    <string name="text_title" translatable="false">DGI Design Overview</string>
+    <string name="title_activity_login" translatable="false">LoginActivity</string>
+    <string name="title_activity_register" translatable="false">RegisterActivity</string>
+    <string name="title_activity_users_list" translatable="false">UsersListActivity</string>
+    <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
+    <string name="ok">OK</string>
+    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
+    <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
+    <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low FINDevice storage</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="title_activity_main">Barcode Reader Sample</string>
+    <string name="barcode_header">Click &quot;Read Barcode&quot; to read a barcode</string>
+    <string name="read_barcode">Read Barcode</string>
+    <string name="auto_focus">Auto Focus</string>
+    <string name="use_flash">Use Flash</string>
+    <string name="barcode_success">Barcode read successfully</string>
+    <string name="barcode_failure">No barcode captured</string>
+    <string name="barcode_error">"Error reading barcode: %1$s"</string>
+    <string name="product" translatable="false">Product</string>
+    <!--New VendorItem-->
+    <string name="productName">Product Name</string>
+    <string name="productCode">Product Code</string>
+    <string name="productBarcode">Product Barcode</string>
+    <string name="productHasVat">Has VAT</string>
+    <string name="productVat">% VAT</string>
+    <string name="productPrice">Price</string>
+    <string name="save">Save</string>
+    <string name="add_or_update_cart">Add or Update Cart</string>
+    <!--Font icons file-->
+    <string name="font_icons_file" translatable="false">Glyphter.ttf</string>
+
+    <!--Transaction Success-->
+    <string name="transaction_no">Transaction no</string>
+    <string name="transaction_for">For</string>
+    <string name="currency">$</string>
+    <string name="generated">Generated</string>
+    <string name="view_receipt">View Receipt</string>
+    <string name="download_receipt" translatable="false">Download Receipt</string>
+    <string name="new_transaction">New Transaction</string>
+    <string name="no_result">No Results found</string>
+    <string name="totalLabel" translatable="false">Save Total:</string>
+    <string name="update">Update</string>
+    <string name="merchant_code">Email Address</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="customer_name">Customer Name</string>
+    <string name="scan_more">Scan More</string>
+    <string name="add_manually">Add Manually</string>
+    <string name="save_total">Save Total:\u0020\u0020</string>
+    <string name="new_transcation">New Transaction</string>
+    <string name="please_enter_customer_name">Please Enter Customer Name</string>
+    <string name="select_product">Select Product</string>
+    <string name="search">Search</string>
+    <string name="qty">Qty</string>
+    <string name="price">Price($)</string>
+    <string name="vat_percent">% VAT</string>
+    <string name="vat_dollar">VAT($)</string>
+    <string name="total">Total: \u0020</string>
+    <string name="please_enter_product_name">Please enter Product Name</string>
+    <string name="no_product_found">No Product Found</string>
+    <string name="should_not_be_zero">Quantity and Total Should not be 0</string>
+    <string name="all_transaction">All Transactions</string>
+    <string name="fetching_transactions">Fetching Transactions</string>
+    <string name="fetching_invoice">Fetching Invoice..</string>
+    <string name="transaction_detail">Transaction Detail</string>
+    <string name="transaction_number">Transaction Number</string>
+    <string name="transaction_generated">Transaction Generated</string>
+    <string name="search_products">Search Products</string>
+    <string name="FINVendorItem">Product</string>
+    <string name="products">Products</string>
+    <string name="no_result_found">No Result Found</string>
+    <string name="fetching_product_details">Fetching FINVendorItem details</string>
+    <string name="logout">Logout</string>
+    <string name="new_product">New Product</string>
+    <string name="enter_product_name">Enter FINVendorItem name</string>
+    <string name="enter_product_code">Enter FINVendorItem code</string>
+    <string name="enter_product_price">Enter FINVendorItem price</string>
+    <string name="scan">Scan</string>
+    <string name="select_language">Select Language</string>
+    <string name="change_language">Change Language</string>
+    <string name="welcome">Welcome</string>
+    <string name="transactions">Transactions</string>
+    <string name="creatin_invoice">Creating Invoice...</string>
+    <string name="forget_password" translatable="false">Forgot Password</string>
+    <string name="enter_merchant_code">Enter Your Merchant Code</string>
+    <string name="send">SEND</string>
+    <string name="cancel">CANCEL</string>
+    <string name="please_enter_merchant_code">Please check your credentials!</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="delete_product">Delete FINVendorItem..</string>
+    <string name="update_product">Update Product</string>
+    <string name="uploading_product">Uploading Product</string>
+    <string name="creating_product">Creating Product</string>
+    <string name="enter_both_credentials">Enter both credentials.</string>
+    <string name="login_user">Login User...</string>
+    <string name="loading">Loading...</string>
+    <string name="allow_camera">Allow camera access for scanning</string>
+    <string name="please_click_back_again">Please click back again to exit</string>
+    <string name="receipt">Receipt</string>
+    <string name="print">Print</string>
+    <string name="no_item_available">No Item Available</string>
+    <string-array name="language_option">
+        <item>English</item>
+        <item>French</item>
+    </string-array>
+
+    <!-- Toolbar titles when navigation menu item is selected -->
+    <string-array name="nav_item_activity_titles">
+        <item>Dashboard</item>
+        <item>New transaction</item>
+        <item>All_transactions</item>
+        <item>products_menu</item>
+        <item>Change language</item>
+        <item>logout</item>
+    </string-array>
+
+    <string name="openDrawer">open_drawer</string>
+    <string name="closeDrawer">close_drawer</string>
+    <string name="title_activity_pop_up">PopUpActivity</string>
+
+</resources>

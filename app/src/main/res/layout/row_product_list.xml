@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.chauthai.swipereveallayout.SwipeRevealLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipe_layout_1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="2dp"
+    app:dragEdge="right"
+    app:mode="same_level">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_update"
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:background="@android:color/darker_gray"
+            android:textColor="@android:color/white"
+            android:text="@string/edit"/>
+
+        <TextView
+            android:id="@+id/tv_delete"
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:background="@android:color/holo_red_dark"
+            android:textColor="@android:color/white"
+            android:text="@string/delete"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_productList_productValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@+id/ll_row_productDetails"
+            android:text="@string/product"
+            android:layout_marginRight="0.5dp"
+            android:paddingTop="10dp"
+            android:paddingLeft="15dp"
+            android:paddingBottom="10dp"
+            android:background="@color/white"
+            android:singleLine="true"/>
+        <LinearLayout
+            android:id="@+id/ll_row_productDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true">
+            <TextView
+                android:id="@+id/tv_productList_vatValue"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="0.5dp"
+                android:layout_marginRight="0.5dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:maxLines="1"
+                android:text="@string/vat_percent"
+                android:gravity="center"
+                android:background="@color/white"/>
+            <TextView
+                android:id="@+id/tv_productList_priceValue"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="0.5dp"
+                android:layout_marginRight="0.5dp"
+                android:text="@string/price"
+                android:maxLines="1"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:background="@color/white"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</com.chauthai.swipereveallayout.SwipeRevealLayout>

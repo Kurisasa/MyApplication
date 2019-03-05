@@ -1,0 +1,174 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.myapplication.fragments.NewTransactionFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_above="@id/total_price_layout">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/read_barcode"
+            android:textSize="13sp"
+            android:padding="10dp"
+            android:background="#F2F2F2"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/gray_transparent"/>
+
+            <EditText
+                android:id="@+id/et_customer_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:textColor="@color/black"
+                android:padding="10dp"
+                android:textColorHint="@color/gray_transparent"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/gray_transparent"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:gravity="end">
+
+            <LinearLayout
+                android:id="@+id/scan_more_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/bg_button"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp">
+
+            <TextView
+                android:id="@+id/btn_scan_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="I"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/scan_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="@string/scan_more"
+                android:minLines="2"
+                android:maxLines="2"
+                android:textColor="@color/white"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/add_manually_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/bg_button"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp">
+
+            <TextView
+                android:id="@+id/btn_add_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="E"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/add_manually"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="@string/add_manually"
+                android:minLines="2"
+                android:maxLines="2"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/white"
+                android:gravity="center_vertical"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_item_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/total_price_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:gravity="end"
+        android:padding="10dp"
+        android:background="@color/bg_button">
+
+        <TextView
+            android:id="@+id/tv_totalLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save_total"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/tv_total_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/tv_save_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="B"
+            android:textColor="@color/white"
+            android:textSize="13dp"
+            android:gravity=""/>
+
+    </LinearLayout>
+
+
+
+
+</RelativeLayout>
