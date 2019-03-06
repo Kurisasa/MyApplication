@@ -34,11 +34,14 @@ public class SessionManager {
     // languageCodes (make variable public to access from outside)
     public static final String KEY_LANGUAGE_CODE = "languageCode";
 
-    // languageCodes (make variable public to access from outside)
+    // token (make variable public to access from outside)
     public static final String KEY_TOKEN = "token";
 
-    // languageCodes (make variable public to access from outside)
+    // username (make variable public to access from outside)
     public static final String KEY_USERNAME = "username";
+
+    // vendorGuid (make variable public to access from outside)
+    public static final String KEY_VENDOR_GUID = "vendorGuid";
 
     // Constructor
     public SessionManager(Context context) {
@@ -57,13 +60,13 @@ public class SessionManager {
         // Storing name in pref
         editor.putString(KEY_NAME, name);
 
-        // Storing email in pref
+        // Storing languageCode in pref
         editor.putString(KEY_LANGUAGE_CODE, languageCode);
 
-        // Storing name in pref
+        // Storing token in pref
         editor.putString(KEY_TOKEN, token);
 
-        // Storing email in pref
+        // Storing username in pref
         editor.putString(KEY_USERNAME, username);
 
         // commit changes
@@ -102,13 +105,13 @@ public class SessionManager {
         // user name
         user.put(KEY_NAME, pref.getString(KEY_NAME, null));
 
-        // user email id
+        // user LANGUAGE CODE
         user.put(KEY_LANGUAGE_CODE, pref.getString(KEY_LANGUAGE_CODE, null));
 
-        // user email id
+        // user TOKEN
         user.put(KEY_TOKEN, pref.getString(KEY_TOKEN, null));
 
-        // user email id
+        // user USERNAME
         user.put(KEY_USERNAME, pref.getString(KEY_USERNAME, null));
 
         // return user

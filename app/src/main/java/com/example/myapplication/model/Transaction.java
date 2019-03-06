@@ -1,5 +1,6 @@
 package com.example.myapplication.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Transaction {
@@ -18,17 +19,17 @@ public class Transaction {
     private double Change;
     private String TransactionDTS;
     private String Location;
-    private List<TransactionLineItem> lineItemList;
+    private ArrayList<TransactionLineItem> lineItemList;
 
     public Transaction(){
 
     }
 
-    public List<TransactionLineItem> getLineItemList() {
+    public ArrayList<TransactionLineItem> getLineItemList() {
         return lineItemList;
     }
 
-    public void setLineItemList(List<TransactionLineItem> lineItemList) {
+    public void setLineItemList(ArrayList<TransactionLineItem> lineItemList) {
         this.lineItemList = lineItemList;
     }
 

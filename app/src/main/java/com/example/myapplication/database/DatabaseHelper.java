@@ -327,11 +327,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-
-
-
-
-
     /**
      * This method is to create FINVendor record
      *
@@ -404,20 +399,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         //Save your line Item
 
-        for (int i = 0; i < FINTransaction.getLineItemList().size(); i++){
-
-            TransactionLineItem transactionLineItem = new TransactionLineItem();
-            transactionLineItem.setBarcode(FINTransaction.getLineItemList().get(i).getBarcode());
-            transactionLineItem.setLineItemGuid(FINTransaction.getLineItemList().get(i).getLineItemGuid());
-            transactionLineItem.setLineTotal(FINTransaction.getLineItemList().get(i).getPrice());
-            transactionLineItem.setName(FINTransaction.getLineItemList().get(i).getName());
-            transactionLineItem.setQuantity(1);
-            transactionLineItem.setTransactionGuid(FINTransaction.getTransactionGuid());
-            transactionLineItem.setVat(FINTransaction.getLineItemList().get(i).getVat());
-            transactionLineItem.setPrice(FINTransaction.getLineItemList().get(i).getPrice());
+        //for (int i = 0; i < FINTransaction.getLineItemList().size(); i++){
+            for(TransactionLineItem item: FINTransaction.getLineItemList())
+            {
+                addTransactionItem(item);
+//            TransactionLineItem transactionLineItem = new TransactionLineItem();
+//            transactionLineItem.setBarcode(FINTransaction.getLineItemList().get(i).getBarcode());
+//            transactionLineItem.setLineItemGuid(FINTransaction.getLineItemList().get(i).getLineItemGuid());
+//            transactionLineItem.setLineTotal(FINTransaction.getLineItemList().get(i).getPrice());
+//            transactionLineItem.setName(FINTransaction.getLineItemList().get(i).getName());
+//            transactionLineItem.setQuantity(1);
+//            transactionLineItem.setTransactionGuid(FINTransaction.getTransactionGuid());
+//            transactionLineItem.setVat(FINTransaction.getLineItemList().get(i).getVat());
+//            transactionLineItem.setPrice(FINTransaction.getLineItemList().get(i).getPrice());
 
             // Inserting Row
-            long transaction_item_id = db.insert(TABLE_TRANSACTION_LINE_ITEM, null, values);
+           // long transaction_item_id = db.insert(TABLE_TRANSACTION_LINE_ITEM, null, values);
         }
 
         db.close();
@@ -457,7 +454,43 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
         // return user list
+        ArrayList<TransactionLineItem> lineItems = GetLineIteems(FINTransaction.getTransactionGuid());
+        FINTransaction.setLineItemList(lineItems);
+
         return FINTransaction;
+    }
+
+    private ArrayList<TransactionLineItem> GetLineIteems(String TransactionGuid)
+    {
+        ArrayList<TransactionLineItem> lineItems = new ArrayList<TransactionLineItem>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_TRANSACTION_LINE_ITEM + " WHERE " + COLUMN_TRANSACTIONS_GUID  + " = '"  + TransactionGuid + "'";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // Traversing through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                TransactionLineItem lineItem = new TransactionLineItem();
+                lineItem.setLineItemGuid(cursor.getString(cursor.getColumnIndex(COLUMN_LINE_ITEM_GUID)));
+                lineItem.setTransactionGuid(cursor.getString(cursor.getColumnIndex(COLUMN_TRANSACTIONS_GUID)));
+                lineItem.setBarcode(cursor.getString(cursor.getColumnIndex(COLUMN_BARCODESS)));
+                lineItem.setPrice(cursor.getDouble(cursor.getColumnIndex(COLUMN_PRICES)));
+                lineItem.setVat(cursor.getDouble(cursor.getColumnIndex(COLUMN_VATS)));
+                lineItem.setQuantity(cursor.getInt(cursor.getColumnIndex(COLUMN_QUANTITY)));
+                lineItem.setLineTotal(cursor.getDouble(cursor.getColumnIndex(COLUMN_LINE_TOTAL)));
+                lineItem.setName(cursor.getString(cursor.getColumnIndex(COLUMN_NAMES)));
+                lineItems.add(lineItem);
+
+                // Adding FINTransaction record to list
+                //FINTransaction.setLineItemList();
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        return lineItems;
+
     }
 
     /**

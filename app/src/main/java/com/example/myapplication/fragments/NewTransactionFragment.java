@@ -43,7 +43,13 @@ import com.example.myapplication.session.SessionManager;
 import com.example.myapplication.utils.CommonFunctions;
 import com.example.myapplication.utils.Message;
 import com.google.android.gms.common.api.CommonStatusCodes;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Phrase;
 import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +57,8 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -59,6 +67,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -83,7 +92,9 @@ public class NewTransactionFragment extends Fragment implements View.OnClickList
     double total_price,total_tax;
     DatabaseHelper databaseHelper;
     SessionManager session;
-    String token;
+    String token, vendorGuid;
+    double TenderAmount;
+
     public NewTransactionFragment() {
         // Required empty public constructor
     }
@@ -125,7 +136,6 @@ public class NewTransactionFragment extends Fragment implements View.OnClickList
         session.checkLogin();
         HashMap<String, String> user = session.getUserDetails();
         token = user.get(SessionManager.KEY_TOKEN);
-
 
     }
 
@@ -181,11 +191,11 @@ public class NewTransactionFragment extends Fragment implements View.OnClickList
 
         updateTotal();
     }
-    private double m_Text = 0.0;
+
     private void setToolbar(){
 
     }
-
+    double payedCash = 0.0;
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -213,6 +223,8 @@ public class NewTransactionFragment extends Fragment implements View.OnClickList
                 //  scanBluetooth();
 
                 if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+
+
                     // Do the file write
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setTitle("Proceed Payments");
@@ -227,9 +239,9 @@ public class NewTransactionFragment extends Fragment implements View.OnClickList
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            m_Text = Double.parseDouble(input.getText().toString());
-                            Log.d(TAG,"Total "+ m_Text);
-
+                            TenderAmount = Double.parseDouble(input.getText().toString());
+                            Log.d(TAG,"Total "+ TenderAmount);
+                            createPDF();
                         }
                     });
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -240,7 +252,6 @@ public class NewTransactionFragment extends Fragment implements View.OnClickList
                     });
 
                     builder.show();
-                    createPDF();
 
                 } else {
                     // Request permission from the user
@@ -248,8 +259,11 @@ public class NewTransactionFragment extends Fragment implements View.OnClickList
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
                 }
 
+
                 break;
         }
+
+
     }
 
 
@@ -269,6 +283,8 @@ public class NewTransactionFragment extends Fragment implements View.OnClickList
             }
         }
     }
+
+
     private void addToLocal() throws IOException, JSONException {
         // Sending get request
         URL url = new URL("https://dgi.simp.africa/backend/api/Vendor/getdevicevendordata/94283ff1-e34f-46ef-ae2a-4ab641cf4fea");
@@ -291,7 +307,7 @@ public class NewTransactionFragment extends Fragment implements View.OnClickList
 
         JSONObject jsonObj = new JSONObject(jsonStr);
 
-        String vendorGuid  = jsonObj.getJSONObject("returnData").getString("vendorGuid");
+        vendorGuid  = jsonObj.getJSONObject("returnData").getString("vendorGuid");
         String vendorNumber = jsonObj.getJSONObject("returnData").getString("vendorNumber");
         String vendorName = jsonObj.getJSONObject("returnData").getString("vendorName");
         String vendorDescription = jsonObj.getJSONObject("returnData").getString("vendorDescription");
@@ -403,6 +419,7 @@ public class NewTransactionFragment extends Fragment implements View.OnClickList
         total_tax = 0;
 
         Log.d(TAG,"Total"+vendorItemArrayList.size());
+
             for (int i = 0; i < vendorItemArrayList.size(); i++){
                 vat_value = ((vendorItemArrayList.get(i).getPrice()*  vendorItemArrayList.get(i).getTxPercentage()) / 100) * 1;
                 total = total + (vendorItemArrayList.get(i).getPrice()* 1) + vat_value;
@@ -427,8 +444,8 @@ public class NewTransactionFragment extends Fragment implements View.OnClickList
     }
 
     void FormatHeaderCell(PdfPCell cell){
-        cell.setBorderWidthBottom(0);
-        cell.setBorderWidthTop(0);
+        cell.setBorderWidthBottom(1);
+        cell.setBorderWidthTop(1);
         cell.setBorderWidthLeft(0);
         cell.setBorderWidthRight(0);
     }
@@ -438,8 +455,23 @@ public class NewTransactionFragment extends Fragment implements View.OnClickList
         cell.setBorderWidthLeft(0);
         cell.setBorderWidthRight(0);
     }
+
+    void FormatCellTop(PdfPCell cell){
+        cell.setBorderWidthBottom(0);
+        cell.setBorderWidthTop(1);
+        cell.setBorderWidthLeft(0);
+        cell.setBorderWidthRight(0);
+    }
+
+    void FormatCellBottom(PdfPCell cell){
+        cell.setBorderWidthBottom(1);
+        cell.setBorderWidthTop(0);
+        cell.setBorderWidthLeft(0);
+        cell.setBorderWidthRight(0);
+    }
+
     Transaction transaction = null;
-    TransactionLineItem transactionLineItem = null;
+    //TransactionLineItem transactionLineItem = null;
     ArrayList<Transaction> transactions = new ArrayList<>();
 
 
@@ -455,188 +487,241 @@ public class NewTransactionFragment extends Fragment implements View.OnClickList
 
          final int random = new Random().nextInt(61) + 20;
 
-         change = total_price - m_Text;
-         tender = m_Text;
+         change = total_price - TenderAmount;
 
-         Log.d(TAG,"Change " + change);
-         Log.d(TAG,"Tender " + tender);
+
+
+         VendorItem vendorItem1 = vendorItemArrayList.get(0);
 
          DatabaseHelper databaseHelper = new DatabaseHelper(context);
          transaction = new Transaction();
          transaction.setTransactionGuid(randomUUIDString);
-         transaction.setVendorGuid("1aed3755-6968-4463-b38d-c99ca90a9216");
+         transaction.setVendorGuid(token);
          transaction.setDeviceGuid("94283ff1-e34f-46ef-ae2a-4ab641cf4fea");
          transaction.setPeriodGuid(uuid.toString());
          transaction.setTransactionTypeId("1");
          transaction.setDocumentNumber(String.valueOf(random));
-         transaction.setTaxableTotal(0.0);
-         transaction.setNonTaxableTotal(0.0);
          transaction.setVAT(total_tax);
          transaction.setTotal(total_price);
          transaction.setTransactionDTS(timeStamp);
          transaction.setLocation("localhost");
-         transaction.setTender(tender);
+         transaction.setTender(TenderAmount);
          transaction.setChange(change);
+
+
+         double taxableTotal = 0.0;
+         double nonTaxableTotal = 0.0;
+         //for (int i = 0; i < vendorItemArrayList.size(); i++)
+         ArrayList<TransactionLineItem> items = new ArrayList<TransactionLineItem>();
+         for(VendorItem vendorItem: vendorItemArrayList)
+         {
+
+             double vat = Math.round((vendorItem.getPrice()*  vendorItem.getTxPercentage()) / 100);
+             if(vat == 0)
+             {
+                 //Work out NonTaxableTotal
+                 nonTaxableTotal = nonTaxableTotal + vendorItem.getPrice();
+             }
+             else
+             {
+
+                 //Work out TaxableTotal
+                 taxableTotal = taxableTotal + vendorItem.getPrice() + vat;
+             }
+
+             TransactionLineItem transactionLineItem = new TransactionLineItem();
+             transactionLineItem.setBarcode(vendorItem.getBarcode());
+             transactionLineItem.setLineItemGuid(vendorItem.getItemGuid());
+             transactionLineItem.setLineTotal(vendorItem.getPrice()+ vat);
+             transactionLineItem.setName(vendorItem.getItemName());
+             transactionLineItem.setQuantity(1);
+             transactionLineItem.setTransactionGuid(transaction.getTransactionGuid());
+             transactionLineItem.setVat(vat);
+             transactionLineItem.setPrice(vendorItem.getPrice());
+             items.add(transactionLineItem);
+         }
+         transaction.setLineItemList((items));
+         transaction.setNonTaxableTotal(nonTaxableTotal);
+         transaction.setTaxableTotal(nonTaxableTotal);
          transactions.add(transaction);
 
 
-         for (int i = 0; i < vendorItemArrayList.size(); i++){
-
-             transactionLineItem = new TransactionLineItem();
-             transactionLineItem.setBarcode(vendorItemArrayList.get(i).getBarcode());
-             transactionLineItem.setLineItemGuid(randomUUIDString);
-             transactionLineItem.setLineTotal(vendorItemArrayList.get(i).getPrice());
-             transactionLineItem.setName(vendorItemArrayList.get(i).getItemName());
-             transactionLineItem.setQuantity(1);
-             transactionLineItem.setTransactionGuid(transaction.getTransactionGuid());
-             transactionLineItem.setVat(total_tax);
-             transactionLineItem.setPrice(vendorItemArrayList.get(i).getPrice());
-
-             transaction.setLineItemList(transactionLineItem);
-            databaseHelper.addTransaction(transaction);
-            // databaseHelper.addTransactionItem(transactionLineItem);
-         }
+         databaseHelper.addTransaction(transaction);
 
          Transaction Addedransaction =   databaseHelper.getTransaction(randomUUIDString);
 
          Log.d(TAG,"ListItems " + Addedransaction.getLineItemList());
          //Step 1
-//        Document doc = new Document();
-//
-//        try{
-//            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/PDF";
-//            File dir = new File(path);
-//            if(!dir.exists())
-//                dir.mkdir();
-//
-//            Log.d("PDFCreator", "PDF Path: " + path);
-//
-//            //Create time stamp
-////            Date date = new Date() ;
-////            String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
-//
-//            File file = new File(dir, "Invoice1.pdf");
-//            FileOutputStream fOut = new FileOutputStream(file);
-//
-//            //Step 2
-//            PdfWriter.getInstance(doc, fOut);
-//            //Step 3
-//            doc.open();
-//
-//            //Step 4 Add content
-//
-//            // Setting table's cells horizontal alignment
-//            PdfPTable table = new PdfPTable(3);
-//
-//            // Setting table's cells vertical alignment
-//            PdfPCell[] cells = new PdfPCell[3];
-//
-//            cells[0] = new PdfPCell(new Phrase("1001"));
-//            cells[0].setColspan(3);
-//            FormatHeaderCell(cells[0]);
-//            table.addCell(cells[0]);
-//            table.completeRow();
-//
-//            cells[0] = new PdfPCell(new Phrase("Vendor 1"));
-//            cells[0].setColspan(3);
-//            FormatHeaderCell(cells[0]);
-//            table.addCell(cells[0]);
-//            table.completeRow();
-//
-//            cells[0] = new PdfPCell(new Phrase("Test Address"));
-//            cells[0].setColspan(3);
-//            FormatHeaderCell(cells[0]);
-//            table.addCell(cells[0]);
-//            table.completeRow();
-//
-//            cells[0] = new PdfPCell(new Phrase("0123"));
-//            cells[0].setColspan(3);
-//            FormatHeaderCell(cells[0]);
-//            table.addCell(cells[0]);
-//            table.completeRow();
-//
-//            cells[0] = new PdfPCell(new Phrase(timeStamp));
-//            cells[0].setColspan(3);
-//            FormatHeaderCell(cells[0]);
-//            table.addCell(cells[0]);
-//            table.completeRow();
-//
-//            cells[0] = new PdfPCell(new Phrase(" "));
-//            cells[0].setColspan(3);
-//            FormatHeaderCell(cells[0]);
-//            table.addCell(cells[0]);
-//            table.completeRow();
-//
-//            PdfPCell cell1 = new PdfPCell(new Phrase("Qty"));
-//            cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-//            cell1.setBorderWidthBottom(1);
-//            cell1.setBorderWidthTop(1);
-//            cell1.setBorderWidthLeft(0);
-//            cell1.setBorderWidthRight(0);
-//            table.addCell(cell1);
-//
-//            PdfPCell cell2 = new PdfPCell(new Phrase("Item Name"));
-//            cell2.setHorizontalAlignment(Element.ALIGN_LEFT);
-//            cell2.setBorderWidthBottom(1);
-//            cell2.setBorderWidthTop(1);
-//            cell2.setBorderWidthLeft(0);
-//            cell2.setBorderWidthRight(0);
-//            table.addCell(cell2);
-//
-//            PdfPCell cell3 = new PdfPCell(new Phrase("Total"));
-//            cell3.setHorizontalAlignment(Element.ALIGN_RIGHT);
-//            cell3.setBorderWidthBottom(1);
-//            cell3.setBorderWidthTop(1);
-//            cell3.setBorderWidthLeft(0);
-//            cell3.setBorderWidthRight(0);
-//            table.addCell(cell3);
-//            table.completeRow();
-//
-//            for (int i = 0; i < vendorItemArrayList.size(); i++) {
-//
-//                cells[0] = new PdfPCell(new Phrase((vendorItemArrayList.get(i).getBarcode()))); FormatCell(cells[0]);
-//                cells[1] = new PdfPCell(new Phrase((vendorItemArrayList.get(i).getItemName()))); FormatCell(cells[1]);
-//                cells[2] = new PdfPCell(new Phrase(String.valueOf((vendorItemArrayList.get(i).getPrice())))); FormatCell(cells[2]);
-//                cells[2].setHorizontalAlignment(Element.ALIGN_RIGHT);
-//
-//                table.addCell(cells[0]);
-//                table.addCell(cells[1]);
-//                table.addCell(cells[2]);
-//                table.completeRow();
-//            }
-//
-//            cells[0] = new PdfPCell(new Phrase("Total"));
-//            cells[0].setColspan(2);
-//            FormatHeaderCell(cells[0]);
-//            cells[2] = new PdfPCell(new Phrase(tv_total_price.getText().toString()));
-//            cells[2].setHorizontalAlignment(Element.ALIGN_RIGHT);
-//            FormatHeaderCell(cells[2]);
-//            cells[0].setBorderWidthBottom(1);
-//            cells[0].setBorderWidthTop(1);
-//            cells[0].setBorderWidthLeft(0);
-//            cells[0].setBorderWidthRight(0);
-//            cells[2].setBorderWidthBottom(1);
-//            cells[2].setBorderWidthTop(1);
-//            cells[2].setBorderWidthLeft(0);
-//            cells[2].setBorderWidthRight(0);
-//            table.addCell(cells[0]);
-//            table.addCell(cells[2]);
-//            table.completeRow();
-//
-//
-//
-//
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (DocumentException e) {
-//            e.printStackTrace();
-//        }
-//        finally {
-//            //Step 5: Close the document
-//            doc.close();
-//
-//        }
-//         openPdf();
+        Document doc = new Document();
+
+        try{
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/PDF";
+            File dir = new File(path);
+            if(!dir.exists())
+                dir.mkdir();
+
+            Log.d("PDFCreator", "PDF Path: " + path);
+
+            //Create time stamp
+//            Date date = new Date() ;
+//            String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+
+            File file = new File(dir, "Invoice1.pdf");
+            FileOutputStream fOut = new FileOutputStream(file);
+
+            //Step 2
+            PdfWriter.getInstance(doc, fOut);
+            //Step 3
+            doc.open();
+
+            //Step 4 Add content
+
+            // Setting table's cells horizontal alignment
+            PdfPTable table = new PdfPTable(3);
+
+            // Setting table's cells vertical alignment
+            PdfPCell[] cells = new PdfPCell[3];
+
+            PdfPCell cell = new PdfPCell(new Phrase("1001"));
+            cell.setColspan(3);
+            FormatCell(cell);
+            table.addCell(cell);
+            table.completeRow();
+
+            cell = new PdfPCell(new Phrase("Vendor 1"));
+            cell.setColspan(3);
+            FormatCell(cell);
+            table.addCell(cell);
+            table.completeRow();
+
+            cell = new PdfPCell(new Phrase("Test Address"));
+            cell.setColspan(3);
+            FormatCell(cell);
+            table.addCell(cell);
+            table.completeRow();
+
+            cell = new PdfPCell(new Phrase("0123"));
+            cell.setColspan(3);
+            FormatCell(cell);
+            table.addCell(cell);
+            table.completeRow();
+
+            cell = new PdfPCell(new Phrase(timeStamp));
+            cell.setColspan(3);
+            FormatCell(cell);
+            table.addCell(cell);
+            table.completeRow();
+
+            cell = new PdfPCell(new Phrase(" "));
+            cell.setColspan(3);
+            FormatCell(cell);
+            table.addCell(cell);
+            table.completeRow();
+
+            PdfPCell cell1 = new PdfPCell(new Phrase("Qty"));
+            cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell1.setBorderWidthBottom(1);
+            cell1.setBorderWidthTop(1);
+            cell1.setBorderWidthLeft(0);
+            cell1.setBorderWidthRight(0);
+            table.addCell(cell1);
+
+            PdfPCell cell2 = new PdfPCell(new Phrase("Item Name"));
+            cell2.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell2.setBorderWidthBottom(1);
+            cell2.setBorderWidthTop(1);
+            cell2.setBorderWidthLeft(0);
+            cell2.setBorderWidthRight(0);
+            table.addCell(cell2);
+
+            PdfPCell cell3 = new PdfPCell(new Phrase("Total"));
+            cell3.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell3.setBorderWidthBottom(1);
+            cell3.setBorderWidthTop(1);
+            cell3.setBorderWidthLeft(0);
+            cell3.setBorderWidthRight(0);
+            table.addCell(cell3);
+            table.completeRow();
+
+            //for (int i = 0; i < vendorItemArrayList.size(); i++) {
+            for (TransactionLineItem lineItem : Addedransaction.getLineItemList())
+            {
+                cells[0] = new PdfPCell(new Phrase((lineItem.getBarcode()))); FormatCell(cells[0]);
+                cells[1] = new PdfPCell(new Phrase((lineItem.getName()))); FormatCell(cells[1]);
+                cells[2] = new PdfPCell(new Phrase(String.valueOf((lineItem.getPrice())))); FormatCell(cells[2]);
+                cells[2].setHorizontalAlignment(Element.ALIGN_RIGHT);
+
+                table.addCell(cells[0]);
+                table.addCell(cells[1]);
+                table.addCell(cells[2]);
+                table.completeRow();
+            }
+
+            cells = new PdfPCell[3];
+
+            cells[0] = new PdfPCell(new Phrase("Vat"));
+            cells[0].setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cells[0].setColspan(2);
+            FormatCellTop(cells[0]);
+            cells[2] = new PdfPCell(new Phrase(String.valueOf(Addedransaction.getTotal())));
+            cells[2].setHorizontalAlignment(Element.ALIGN_RIGHT);
+            FormatCellTop(cells[2]);
+            table.addCell(cells[0]);
+            table.addCell(cells[2]);
+            table.completeRow();
+
+            cells = new PdfPCell[3];
+
+            cells[0] = new PdfPCell(new Phrase("Balance"));
+            cells[0].setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cells[0].setColspan(2);
+            FormatCell(cells[0]);
+            cells[2] = new PdfPCell(new Phrase(String.valueOf(Addedransaction.getTotal())));
+            cells[2].setHorizontalAlignment(Element.ALIGN_RIGHT);
+            FormatCell(cells[2]);
+            table.addCell(cells[0]);
+            table.addCell(cells[2]);
+            table.completeRow();
+
+            cells = new PdfPCell[3];
+
+            cells[0] = new PdfPCell(new Phrase("Tender"));
+            cells[0].setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cells[0].setColspan(2);
+            FormatCell(cells[0]);
+            cells[2] = new PdfPCell(new Phrase(String.valueOf(Addedransaction.getTotal())));
+            cells[2].setHorizontalAlignment(Element.ALIGN_RIGHT);
+            FormatCell(cells[2]);
+            table.addCell(cells[0]);
+            table.addCell(cells[2]);
+            table.completeRow();
+
+            cells = new PdfPCell[3];
+
+            cells[0] = new PdfPCell(new Phrase("Change"));
+            cells[0].setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cells[0].setColspan(2);
+            FormatCellBottom(cells[0]);
+            cells[2] = new PdfPCell(new Phrase(String.valueOf(Addedransaction.getTotal())));
+            cells[2].setHorizontalAlignment(Element.ALIGN_RIGHT);
+            FormatCellBottom(cells[2]);
+            table.addCell(cells[0]);
+            table.addCell(cells[2]);
+            table.completeRow();
+
+            doc.add(table);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+        finally {
+            //Step 5: Close the document
+            doc.close();
+
+        }
+         openPdf();
     }
 
     void openPdf(){

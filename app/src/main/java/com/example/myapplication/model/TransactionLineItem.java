@@ -2,8 +2,9 @@ package com.example.myapplication.model;
 
 import java.util.ArrayList;
 
-public class TransactionLineItem extends ArrayList<TransactionLineItem> {
+public class TransactionLineItem  {
 
+    //ArrayList<TransactionLineItem> = new ArrayList<>
     private String LineItemGuid;
     private String TransactionGuid;
     private String Barcode;

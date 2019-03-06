@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -18,10 +17,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.support.design.widget.NavigationView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.myapplication.activity.SelectLanguageActivity;
+import com.example.myapplication.fragments.AllTransactionsFragment;
 import com.example.myapplication.fragments.NewTransactionFragment;
 import com.example.myapplication.login.LoginActivity;
 import com.example.myapplication.utils.CircleTransform;
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity
         //mApiService = UtilsApi.getAPIService();
 
         mHandler = new Handler();
-        drawer_layout = (DrawerLayout) findViewById(R.id.drawer_layout);
+       drawer_layout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer_layout.addDrawerListener(toggle);
@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity
                 return newTransactionFragment;
 
                 case 1:
-                NewTransactionFragment transactionFragment = new NewTransactionFragment();
+                AllTransactionsFragment transactionFragment = new AllTransactionsFragment();
                 return transactionFragment;
 
 
@@ -295,9 +295,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        drawer_layout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            drawer_layout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -356,7 +356,7 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(getApplicationContext(), "Logout user!", Toast.LENGTH_LONG).show();
         }
 
-        drawer_layout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //drawer_layout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer_layout.closeDrawer(GravityCompat.START);
         return true;
     }
